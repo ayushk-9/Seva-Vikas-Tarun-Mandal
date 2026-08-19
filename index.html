@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>सेवा विकास तरुण मंडळ, गणेशनगर</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff7ed;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(135deg, #e65100, #ff9800);
+      color: white;
+      text-align: center;
+      padding: 28px 15px;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 27px;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 2px 8px #00000015;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      color: #777;
+      font-size: 14px;
+    }
+
+    .card strong {
+      font-size: 24px;
+      color: #e65100;
+    }
+
+    .list-box {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 2px 8px #00000015;
+    }
+
+    .list-box h2 {
+      margin-top: 0;
+      color: #e65100;
+    }
+
+    .search {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 13px 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    th {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .done {
+      color: #16803c;
+      font-weight: bold;
+    }
+
+    .pending {
+      color: #d97706;
+      font-weight: bold;
+    }
+
+    .receipt {
+      background: #e65100;
+      color: white;
+      border: 0;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #777;
+    }
+
+    @media (max-width: 700px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      table {
+        font-size: 14px;
+      }
+
+      th, td {
+        padding: 10px 6px;
+      }
+
+      .hide-mobile {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>॥ श्री गणेशाय नमः ॥</h1>
+  <h1>सेवा विकास तरुण मंडळ, गणेशनगर</h1>
+  <p>गणेश उत्सव २०२६ – वर्गणी</p>
+</header>
+
+<div class="container">
+
+  <div class="stats">
+    <div class="card">
+      <h3>एकूण वर्गणीदार</h3>
+      <strong id="totalDonors">0</strong>
+    </div>
+
+    <div class="card">
+      <h3>Paid</h3>
+      <strong id="paidDonors">0</strong>
+    </div>
+
+    <div class="card">
+      <h3>Pending</h3>
+      <strong id="pendingDonors">0</strong>
+    </div>
+
+    <div class="card">
+      <h3>एकूण जमा</h3>
+      <strong id="totalAmount">₹0</strong>
+    </div>
+  </div>
+
+  <div class="list-box">
+    <h2>वर्गणीदार यादी</h2>
+
+    <input
+      type="text"
+      class="search"
+      id="search"
+      placeholder="नाव शोधा..."
+      onkeyup="showDonors()"
+    >
+
+    <table>
+      <thead>
+        <tr>
+          <th>नाव</th>
+          <th>रक्कम</th>
+          <th>स्थिती</th>
+          <th>पावती</th>
+        </tr>
+      </thead>
+
+      <tbody id="donorList"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>
+  सेवा विकास तरुण मंडळ, गणेशनगर © २०२६
+</footer>
+
+<script>
+
+const donors = [
+  {
+    name: "XYZ",
+    amount: 501,
+    status: "Done"
+  },
+  {
+    name: "ABC",
+    amount: 1001,
+    status: "Pending"
+  },
+  {
+    name: "PQR",
+    amount: 501,
+    status: "Pending"
+  }
+];
+
+function updateStats() {
+
+  const paid = donors.filter(d => d.status === "Done");
+
+  document.getElementById("totalDonors").textContent = donors.length;
+  document.getElementById("paidDonors").textContent = paid.length;
+  document.getElementById("pendingDonors").textContent =
+    donors.length - paid.length;
+
+  const total = paid.reduce((sum, d) => sum + d.amount, 0);
+
+  document.getElementById("totalAmount").textContent =
+    "₹" + total.toLocaleString("en-IN");
+}
+
+function showDonors() {
+
+  const search =
+    document.getElementById("search").value.toLowerCase();
+
+  const list =
+    document.getElementById("donorList");
+
+  list.innerHTML = "";
+
+  donors
+    .filter(d => d.name.toLowerCase().includes(search))
+    .forEach((donor, index) => {
+
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${donor.name}</td>
+        <td>₹${donor.amount.toLocaleString("en-IN")}</td>
+        <td class="${donor.status === "Done" ? "done" : "pending"}">
+          ${donor.status === "Done" ? "✅ Done" : "⏳ Pending"}
+        </td>
+        <td>
+          ${
+            donor.status === "Done"
+            ? `<button class="receipt" onclick="receipt(${index})">पावती</button>`
+            : "-"
+          }
+        </td>
+      `;
+
+      list.appendChild(row);
+    });
+}
+
+function receipt(index) {
+
+  const donor = donors[index];
+
+  alert(
+    "पावती\n\n" +
+    "सेवा विकास तरुण मंडळ, गणेशनगर\n\n" +
+    "पावती क्र.: XYZ-" + (index + 1) + "\n" +
+    "नाव: " + donor.name + "\n" +
+    "रक्कम: ₹" + donor.amount + "\n" +
+    "दिनांक: 19/08/2026"
+  );
+}
+
+updateStats();
+showDonors();
+
+</script>
+
+</body>
+</html>
